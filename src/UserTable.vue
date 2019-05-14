@@ -5,7 +5,7 @@
       <div class="divider"></div>
       <div class="search">
         <i class="fas fa-search"></i>
-        <input type="text" v-model="search" placeholder="Filter table content">
+        <input type="text" placeholder="Filter table content">
       </div>
     </div>
     <div class="user-info-table">
@@ -27,9 +27,9 @@
           <td>{{ user.name }}</td>
           <td class="green-td">{{ user.email }}</td>
           <td class="green-td">{{ user.address.city }}</td>
-          <td>Always</td>
-          <td>{{randomDay}}</td>
-          <td class="green-td">0</td>
+          <td>{{ user.ride_in_group }}</td>
+          <td>{{ user.days_of_the_week }}</td>
+          <td class="green-td">{{ user.posts }}</td>
           <td class="green-td">{{ user.albums }}</td>
           <td>0</td>
           <td class="trash-hover">
@@ -52,20 +52,19 @@ export default {
       photos: null,
       albums: null,
       posts: null,
-      search: "",
-      days_of_the_week: [
-        { id: 1, title: "Sun" },
-        { id: 2, title: "Mon" },
-        { id: 3, title: "Tue" },
-        { id: 4, title: "Wed" },
-        { id: 5, title: "Thu" },
-        { id: 6, title: "Fri" },
-        { id: 7, title: "Sat" }
-      ],
       ride_in_group: [
-        { id: 1, title: "Always" },
-        { id: 2, title: "Sometimes" },
-        { id: 3, title: "Never" }
+        { id: "always", title: "Always" },
+        { id: "sometimes", title: "Sometimes" },
+        { id: "never", title: "Never" }
+      ],
+      days_of_the_week: [
+        { id: "sun", title: "Sun" },
+        { id: "mon", title: "Mon" },
+        { id: "tue", title: "Tue" },
+        { id: "wed", title: "Wed" },
+        { id: "thu", title: "Thu" },
+        { id: "fri", title: "Fri" },
+        { id: "sat", title: "Sat" }
       ]
     };
   },
@@ -92,9 +91,28 @@ export default {
         .then(response => (this.photos = response.data));
 
       // get posts info
-      axios
-        .get("https://jsonplaceholder.typicode.com/posts")
-        .then(response => (this.posts = response.data));
+      axios.get("https://jsonplaceholder.typicode.com/posts").then(response => {
+        this.posts = response.data;
+        this.users.forEach((user, index) => {
+          let newUser = user;
+          newUser.posts = this.countPostsByUser(user.id);
+          Vue.set(this.users[index], newUser);
+        });
+      });
+
+      // random days_of_the_week
+      this.users.forEach((user, index) => {
+        let newUser = user;
+        newUser.days_of_the_week = this.randomData(this.days_of_the_week).title;
+        Vue.set(this.users[index], newUser);
+      });
+
+      // random ride_in_group
+      this.users.forEach((user, index) => {
+        let newUser = user;
+        newUser.ride_in_group = this.randomData(this.ride_in_group).title;
+        Vue.set(this.users[index], newUser);
+      });
     });
   },
   methods: {
@@ -106,14 +124,18 @@ export default {
           return acc;
         }
       }, 0);
-    }
-  },
-  computed: {
-    randomDay: () => {
-      return "Hello";
     },
-    randomRide: () => {
-      return "Hi";
+    countPostsByUser: function(userId) {
+      return this.posts.reduce((acc, post) => {
+        if (userId == post.userId) {
+          return (acc += 1);
+        } else {
+          return acc;
+        }
+      }, 0);
+    },
+    randomData: function(data) {
+      return data[Math.floor(Math.random() * data.length)];
     }
   }
 };
