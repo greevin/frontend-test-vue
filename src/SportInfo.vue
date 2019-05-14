@@ -28,7 +28,7 @@
 export default {};
 </script>
 
-<style>
+<style scoped>
 #sport-info {
   background: #b2eae1;
   display: flex;

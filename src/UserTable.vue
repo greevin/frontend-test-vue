@@ -113,13 +113,13 @@ export default {
       return "Hello";
     },
     randomRide: () => {
-      return "HI";
+      return "Hi";
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 #user-table {
   padding: 0 50px;
 }

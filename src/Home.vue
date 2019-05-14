@@ -3,6 +3,7 @@
     <app-header></app-header>
     <app-sportinfo></app-sportinfo>
     <app-usertable></app-usertable>
+    <app-registration></app-registration>
   </div>
 </template>
 
