@@ -23,29 +23,29 @@
         <td>{{ user.email }}</td>
         <td>{{ user.address.city }}</td>
         <td>Always</td>
-        <td>Sunday</td>
+        <td>{{randomDay}}</td>
         <td>0</td>
-        <td>0</td>
+        <td>{{ user.albums }}</td>
         <td>0</td>
       </tr>
-      <tr v-for="photo in photos" :key="photo.id">
-        <td>{{ photo.albumId }}</td>
-        <td>{{ photo.id }}</td>
-      </tr>
-      <tr v-for="album in albums" :key="album.id">
-        <td>{{ album.userId }}</td>
-        <td>{{ album.id }}</td>
+    </table>
+
+    <!-- <table>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
       </tr>
       <tr v-for="post in posts" :key="post.id">
         <td>{{ post.userId }}</td>
         <td>{{ post.id }}</td>
       </tr>
-    </table>
+    </table> -->
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Vue from 'vue';
 
 export default {
   data() {
@@ -54,40 +54,65 @@ export default {
       photos: null,
       albums: null,
       posts: null,
-      search: ''
+      search: "",
+      days_of_the_week: [
+        { id: 1, title: "Sun" },
+        { id: 2, title: "Mon" },
+        { id: 3, title: "Tue" },
+        { id: 4, title: "Wed" },
+        { id: 5, title: "Thu" },
+        { id: 6, title: "Fri" },
+        { id: 7, title: "Sat" }
+      ],
+      ride_in_group: [
+        { id: 1, title: "Always" },
+        { id: 2, title: "Sometimes" },
+        { id: 3, title: "Never" }
+      ]
     };
-  },
-  computed: {
-    filteredUsers: function(){
-      return this.users.filter((user) => {
-        return user.name.match(this.search)
-      });
-    }
   },
   mounted() {
     // get users info
-    axios
-      .get("https://jsonplaceholder.typicode.com/users")
-      .then(response => (this.users = response.data));
+    axios.get("https://jsonplaceholder.typicode.com/users").then(response => {
+      this.users = response.data;
 
-    // get photos info
-    axios
-      .get("https://jsonplaceholder.typicode.com/photos")
-      .then(response => (this.photos = response.data));
+      // get albums info
+      axios
+        .get("https://jsonplaceholder.typicode.com/albums")
+        .then(response => {
+          this.albums = response.data;
+          this.users.forEach((user, index) => {
+            let newUser = user;
+            newUser.albums = this.countAlbumsByUser(user.id);
+            Vue.set(this.users[index], newUser)
+          });
+        });
 
-    // get albums info
-    axios
-      .get("https://jsonplaceholder.typicode.com/albums")
-      .then(response => (this.albums = response.data));
+      // get photos info
+      axios
+        .get("https://jsonplaceholder.typicode.com/photos")
+        .then(response => (this.photos = response.data));
 
-    // get posts info
-    axios
-      .get("https://jsonplaceholder.typicode.com/albums")
-      .then(response => (this.posts = response.data));
+      // get posts info
+      axios
+        .get("https://jsonplaceholder.typicode.com/posts")
+        .then(response => (this.posts = response.data));
+    });
+  },
+  methods: {
+    countAlbumsByUser: function(userId) {
+      return this.albums.reduce((acc, album) => {
+        if (userId == album.userId) {
+          return (acc += 1);
+        } else {
+          return acc;
+        }
+      }, 0);
+    },
   },
   computed: {
-    totalPhotos: function() {
-      console.log(this.photos);
+    randomDay: function() {
+      return 'Hello';
     }
   }
 };
