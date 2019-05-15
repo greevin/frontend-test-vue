@@ -31,7 +31,7 @@
           <td>{{ user.days_of_the_week }}</td>
           <td class="green-td">{{ user.posts }}</td>
           <td class="green-td">{{ user.albums }}</td>
-          <td>0</td>
+          <td>{{ user.photos }}</td>
           <td class="trash-hover">
             <i class="fas fa-trash"></i>
           </td>
@@ -51,6 +51,7 @@ export default {
       users: null,
       photos: null,
       albums: null,
+      albumPhotoMap: null,
       posts: null,
       ride_in_group: [
         { id: "always", title: "Always" },
@@ -71,24 +72,39 @@ export default {
   mounted() {
     // get users info
     axios.get("https://jsonplaceholder.typicode.com/users").then(response => {
-      this.users = response.data;
+      this.users = response.data.map(user => {
+        user.albums = 0;
+        user.posts = 0;
+        user.photos = 0;
+
+        return user;
+      });
 
       // get albums info
       axios
-        .get("https://jsonplaceholder.typicode.com/albums")
-        .then(response => {
-          this.albums = response.data;
-          this.users.forEach((user, index) => {
-            let newUser = user;
-            newUser.albums = this.countAlbumsByUser(user.id);
-            Vue.set(this.users[index], newUser);
-          });
-        });
-
-      // get photos info
-      axios
         .get("https://jsonplaceholder.typicode.com/photos")
-        .then(response => (this.photos = response.data));
+        .then(response => {
+          this.photos = response.data;
+          axios
+            .get("https://jsonplaceholder.typicode.com/albums")
+            .then(response => {
+              this.albums = response.data;
+              this.albumPhotoMap = this.albums.map(album => {
+                return {
+                  id: album.id,
+                  value: this.countPhotosByAlbumId(album.id)
+                };
+              });
+              this.users.forEach((user, index) => {
+                let newUser = user;
+                let accumulated = this.countAlbumsAndPhotosByUserId(user.id);
+                newUser.albums = accumulated.albums;
+                newUser.photos = accumulated.photos;
+
+                Vue.set(this.users[index], newUser);
+              });
+            });
+        });
 
       // get posts info
       axios.get("https://jsonplaceholder.typicode.com/posts").then(response => {
@@ -100,14 +116,14 @@ export default {
         });
       });
 
-      // random days_of_the_week
+      // // random days_of_the_week
       this.users.forEach((user, index) => {
         let newUser = user;
         newUser.days_of_the_week = this.randomData(this.days_of_the_week).title;
         Vue.set(this.users[index], newUser);
       });
 
-      // random ride_in_group
+      // // random ride_in_group
       this.users.forEach((user, index) => {
         let newUser = user;
         newUser.ride_in_group = this.randomData(this.ride_in_group).title;
@@ -116,18 +132,36 @@ export default {
     });
   },
   methods: {
-    countAlbumsByUser: function(userId) {
-      return this.albums.reduce((acc, album) => {
-        if (userId == album.userId) {
+    countAlbumsAndPhotosByUserId: function(userId) {
+      return this.albums.reduce(
+        (acc, album) => {
+          if (userId == album.userId) {
+            acc.albums += 1;
+            acc.photos += this.getPhotosByAlbumId(album.id);
+          }
+          return acc;
+        },
+        { albums: 0, photos: 0 }
+      );
+    },
+    getPhotosByAlbumId: function(albumId) {
+      let teste = this.albumPhotoMap.filter(item => {
+        return item.id == albumId;
+      });
+      return teste[0].value;
+    },
+    countPostsByUser: function(userId) {
+      return this.posts.reduce((acc, post) => {
+        if (userId == post.userId) {
           return (acc += 1);
         } else {
           return acc;
         }
       }, 0);
     },
-    countPostsByUser: function(userId) {
-      return this.posts.reduce((acc, post) => {
-        if (userId == post.userId) {
+    countPhotosByAlbumId: function(albumId) {
+      return this.photos.reduce((acc, photo) => {
+        if (albumId == photo.albumId) {
           return (acc += 1);
         } else {
           return acc;
