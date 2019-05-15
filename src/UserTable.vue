@@ -22,7 +22,7 @@
           <th>Photos</th>
           <th></th>
         </tr>
-        <tr v-for="user in users" :key="user.id">
+        <tr v-for="(user, index) in users" :key="user.id" :id="user.id">
           <td>{{ user.username }}</td>
           <td>{{ user.name }}</td>
           <td class="green-td">{{ user.email }}</td>
@@ -32,7 +32,7 @@
           <td class="green-td">{{ user.posts }}</td>
           <td class="green-td">{{ user.albums }}</td>
           <td>{{ user.photos }}</td>
-          <td class="trash-hover">
+          <td class="trash-hover" v-on:click="deleteRow(user, index)">
             <i class="fas fa-trash"></i>
           </td>
         </tr>
@@ -170,6 +170,12 @@ export default {
     },
     randomData: function(data) {
       return data[Math.floor(Math.random() * data.length)];
+    },
+    deleteRow: function(user, index) {
+      let confirmDialog = confirm("Delete " + user.name + " ?");
+      if (confirmDialog == true) {
+        this.users.splice(index, 1);
+      }
     }
   }
 };
