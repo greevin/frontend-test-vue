@@ -35,24 +35,30 @@
 </template>
 
 <script>
-import RegistrationForm from './RegistrationForm'
+import RegistrationForm from "./RegistrationForm";
 
-export default{
+export default {
   components: {
-    'app-registration-form': RegistrationForm
+    "app-registration-form": RegistrationForm
   },
   data() {
     return {
-      lorem_ipsum: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eu diam dolor. Donec in feugiat mauris. Aenean euismod dapibus nibh ullamcorper rhoncus."
-    }
+      lorem_ipsum:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eu diam dolor. Donec in feugiat mauris. Aenean euismod dapibus nibh ullamcorper rhoncus."
+    };
   }
-}
+};
 </script>
 
 
 <style scoped>
 #registration {
   padding: 0 50px;
+}
+
+.registration-form {
+  width: 80%;
+  margin: 0 auto;
 }
 
 hr {

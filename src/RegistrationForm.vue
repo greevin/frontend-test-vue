@@ -1,63 +1,67 @@
 <template>
-  <div class="registration-form">
+  <div>
     <form>
-      <div>
-        <div class="username">
-          <small>
-            <b>Username</b>
-          </small>
-          <br>
-          <input type="text" name="username" class="form-input">
-          <br>
-          <small class="instruction">Please fill out this field</small>
+      <div class="row">
+        <div class="column">
+          <div class="username">
+            <small>
+              <b>Username</b>
+            </small>
+            <br>
+            <input type="text" name="username" class="form-input">
+            <br>
+            <small class="instruction">Please fill out this field</small>
+          </div>
+          <div class="name">
+            <small>
+              <b>Name</b>
+            </small>
+            <br>
+            <input type="text" name="name" class="form-input">
+            <br>
+            <small class="instruction">Please fill out this field</small>
+          </div>
+          <div class="email">
+            <small>
+              <b>E-mail</b>
+            </small>
+            <br>
+            <input type="email" name="email" class="form-input">
+            <br>
+            <small class="instruction">Please fill out this field</small>
+          </div>
         </div>
-        <div class="name">
-          <small>
-            <b>Name</b>
-          </small>
-          <br>
-          <input type="text" name="name" class="form-input">
-          <br>
-          <small class="instruction">Please fill out this field</small>
-        </div>
-        <div class="email">
-          <small>
-            <b>E-mail</b>
-          </small>
-          <br>
-          <input type="email" name="email" class="form-input">
-          <br>
-          <small class="instruction">Please fill out this field</small>
-        </div>
-        <div class="city">
-          <small>
-            <b>City</b>
-            <small class="instruction">optional</small>
-          </small>
-          <br>
-          <input type="text" name="city" class="form-input">
-          <br>
-          <small class="instruction">Please fill out this field</small>
-        </div>
-        <div class="ride-group">
-          <small>
-            <b>Ride in group?</b>
-          </small>
-          <br>
-          <small v-for="ride in ride_in_group" :key="ride.id">
-            <input type="radio" name="ride" :value="ride.id">
-            {{ride.title}}
-          </small>
-        </div>
-        <div class="week-group">
-          <small>
-            <b>Days of the week</b>
-          </small>
-          <br>
-          <small v-for="day in days_of_the_week" :key="day.id">
-            <input type="checkbox" :value="day.id">
-            {{day.title}}
-          </small>
+        <div class="column">
+          <div class="city">
+            <small>
+              <b>City</b>
+              <small class="instruction">optional</small>
+            </small>
+            <br>
+            <input type="text" name="city" class="form-input">
+            <br>
+          </div>
+          <div class="ride-group">
+            <small>
+              <b>Ride in group?</b>
+            </small>
+            <br>
+            <small v-for="ride in ride_in_group" :key="ride.id">
+              <input type="radio" name="ride" :value="ride.id">
+              {{ride.title}}
+            </small>
+          </div>
+
+          <div class="week-group">
+            <small>
+              <b>Days of the week</b>
+            </small>
+            <br>
+            <small v-for="day in days_of_the_week" :key="day.id">
+              <input type="checkbox" :value="day.id">
+              {{day.title}}
+            </small>
+          </div>
         </div>
       </div>
       <div class="group-buttons">
@@ -92,18 +96,19 @@ export default {
 </script>
 
 <style scoped>
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
+
 .form-input {
   border: 1px solid #dcdbdc;
   padding: 10px;
   border-radius: 5px;
-  width: 30%;
-}
-
-.form-input input {
-  width: 90%;
-  border-width: 0;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  width: 80%;
   font-size: 12px;
 }
 
@@ -127,8 +132,12 @@ input[type="radio"]:active,
   border: 2px solid #b2eae1;
 }
 
-.registration-form div {
-  margin: 20px 0;
+form div {
+  padding-bottom: 20px;
+}
+
+.group-buttons {
+      margin-top: -25px;
 }
 
 .discard-button {
